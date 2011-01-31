@@ -1,7 +1,9 @@
 require 'spec_helper'
 
 describe Cronsrus do
-  it "should be valid" do
-    Cronsrus.should be_a(Module)
+  it 'should have a config' do
+    config = Cronsrus.config
+    config.class.should == Hash
+    config.keys.should include(*['cronjobs','token'])
   end
 end

@@ -1,0 +1,9 @@
+token: 4a3ed0aa93078dc530f8c19e0be637e9b1aa9a6c
+
+cronjobs:
+  minutely:
+    cron: * * * * *
+    url: http://www.postbin.org/11pz8qi
+  hourly:
+    cron: 0 * * * *
+    url: http://www.postbin.org/11pz8qi
