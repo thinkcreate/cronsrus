@@ -44,15 +44,20 @@ module Cronsrus
       end
 
       protected
+        # 
         def response(response, options={})
           options.reverse_merge!({:parsed => true, :root => nil})
+          return response if not options[:parsed]
 
-          if options[:parsed]
-            response = response.parsed_response
-            response = response.send(:[], options[:root]) if options[:root]
-          end
+          response = response.parsed_response
+          response = response.send(:[], options[:root]) if options[:root]
           response
         end
+
+        #def request(method, method_options, options)
+        #  response_options = options.delete(:response)
+        #  client.send(method, options)
+        #end
 
         def client
           self.class.parent.client
