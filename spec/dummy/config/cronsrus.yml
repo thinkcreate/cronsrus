@@ -2,7 +2,7 @@ token: aa4ea8d4067c4a475645df24ce2baea741e1e36c
 
 cronjobs:
   minutely:
-    cron: * * * * *
+    cron: 15 * * * *
     url: http://www.postbin.org/11pz8qi
   hourly:
     cron: 0 * * * *
