@@ -5,38 +5,55 @@ module Cronsrus
       #  @client = client
       #end
 
-      def all
-        client.get(cronjob_path)
+      def all(options={})
+        options.reverse_merge!({:root => 'cronjobs'})
+        response(client.get(cronjob_path), options)
       end
 
-      def delete(name)
-        client.delete(cronjob_path(name))
+      def delete(name, options={})
+        options.reverse_merge!({:root => 'cronjob'})
+        response(client.delete(cronjob_path(name)), options)
       end
 
-      def show(name)
-        client.get(cronjob_path(name))
+      def show(name, options={})
+        options.reverse_merge!({:root => 'cronjob'})
+        response(client.get(cronjob_path(name)), options)
       end
 
       # cronjob e.g. {:name => 'hourly', :timezone => Time.zone.name, :cron => '0 * * * *', :url => 'http://www.postbin.org/1b233yu'}
-      def update(cronjob)
+      def update(cronjob, options={})
+        options.reverse_merge!({:root => 'cronjob'})
+        # TODO support renaming
         name = cronjob['name'] || cronjob[:name]
-        client.put(cronjob_path(name), {:body => cronjob})
+        response(client.put(cronjob_path(name), {:body => cronjob}), options)
       end
 
       # cronjob e.g. {:name => 'hourly', :timezone => Time.zone.name, :cron => '0 * * * *', :url => 'http://www.postbin.org/1b233yu'}
-      def create(cronjob)
-        client.post(cronjob_path, { :body => cronjob })
+      def create(cronjob, options={})
+        options.reverse_merge!({:root => 'cronjob'})
+        response(client.post(cronjob_path, { :body => cronjob }), options)
       end
 
-      def update_or_create(cronjob)
-        if show(cronjob).code == 200
-          update(cronjob)
+      def update_or_create(cronjob, options={})
+        name = (cronjob['name'] || cronjob[:name])
+        if show(name, :parsed => false).code == 200
+          update(cronjob, options)
         else
-          create(cronjob)
+          create(cronjob, options)
         end
       end
 
       protected
+        def response(response, options={})
+          options.reverse_merge!({:parsed => true, :root => nil})
+
+          if options[:parsed]
+            response = response.parsed_response
+            response = response.send(:[], options[:root]) if options[:root]
+          end
+          response
+        end
+
         def client
           self.class.parent.client
         end
