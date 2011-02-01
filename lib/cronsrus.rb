@@ -1,7 +1,7 @@
+require 'yaml'
+
 require 'cronsrus/config'
 require 'cronsrus/client'
-
-require 'yaml'
 
 module Cronsrus
   extend self

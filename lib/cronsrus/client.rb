@@ -1,10 +1,10 @@
 require 'httparty'
 
 require 'cronsrus/resources'
+
 module Cronsrus
   class Client
     include HTTParty
-    include Cronsrus::Resources
 
     base_uri 'http://api.cronsrus.com'
     #format :json
@@ -20,8 +20,7 @@ module Cronsrus
     end
 
     def cronjobs
-      # FIXME passing self to new think is better
-      @cronjobs ||= Cronsrus::Resources::Cronjob.new
+      @cronjobs ||= Cronsrus::Resources::Cronjob.new(self)
     end
   end
 end
