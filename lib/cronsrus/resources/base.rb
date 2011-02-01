@@ -7,9 +7,12 @@ module Cronsrus
         @client = client
       end
 
-      def response(response, options={})
-        options.reverse_merge!({:parsed => true, :root => nil})
-        return response if not options[:parsed]
+      def response(options={}, &block)
+        options.reverse_merge!({:parse => true, :root => nil})
+
+        response = yield(client.class)
+        
+        return response if not options[:parse]
 
         response = response.parsed_response
         return nil unless response

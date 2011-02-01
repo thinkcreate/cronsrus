@@ -1,41 +1,57 @@
 module Cronsrus
   module Resources
     class Cronjob < Base
+      # for these operations:
+      # all, delete, show, update, create, update_or_create
+      #
+      # return an instance or collection of hashes with data when successfull
+      # return nil otherwise
+      # accepted options:
+      # - parse: default true. Pass false if you want the raw response
+      # - root: what part to return of data
+
       def all(options={})
         options.reverse_merge!({:root => 'cronjobs'})
-        response(client.class.get(cronjob_path), options)
+        response(options) do |r|
+          r.get(cronjob_path)
+        end
       end
 
-      def delete(name, options={})
+      def delete(id, options={})
         options.reverse_merge!({:root => 'cronjob'})
-        response(client.class.delete(cronjob_path(name)), options)
+        response(options) do |r|
+          r.delete(cronjob_path(id))
+        end
       end
 
-      def show(name, options={})
+      def show(id, options={})
         options.reverse_merge!({:root => 'cronjob'})
-        response(client.class.get(cronjob_path(name)), options)
+        response(options) do |r|
+          r.get(cronjob_path(id))
+        end
       end
 
-      # cronjob e.g. {:name => 'hourly', :timezone => Time.zone.name, :cron => '0 * * * *', :url => 'http://www.postbin.org/1b233yu'}
-      def update(cronjob, options={})
+      # data e.g. {:name => 'hourly', :timezone => Time.zone.name, :cron => '0 * * * *', :url => 'http://www.postbin.org/1b233yu'}
+      def update(id, data, options={})
         options.reverse_merge!({:root => 'cronjob'})
-        # TODO support renaming
-        name = cronjob['name'] || cronjob[:name]
-        response(client.class.put(cronjob_path(name), {:body => cronjob}), options)
+        response(options) do |r|
+          r.put(cronjob_path(id), {:body => data})
+        end
       end
 
-      # cronjob e.g. {:name => 'hourly', :timezone => Time.zone.name, :cron => '0 * * * *', :url => 'http://www.postbin.org/1b233yu'}
-      def create(cronjob, options={})
+      # data e.g. {:name => 'hourly', :timezone => Time.zone.name, :cron => '0 * * * *', :url => 'http://www.postbin.org/1b233yu'}
+      def create(data, options={})
         options.reverse_merge!({:root => 'cronjob'})
-        response(client.class.post(cronjob_path, { :body => cronjob }), options)
+        response(options) do |r|
+          r.post(cronjob_path, {:body => data})
+        end
       end
 
-      def update_or_create(cronjob, options={})
-        name = (cronjob['name'] || cronjob[:name])
-        if show(name, :parsed => false).code == 200
-          update(cronjob, options)
+      def update_or_create(id, data, options={})
+        if show(id)
+          update(id, data, options)
         else
-          create(cronjob, options)
+          create(data, options)
         end
       end
 
