@@ -12,6 +12,7 @@ module Cronsrus
         return response if not options[:parsed]
 
         response = response.parsed_response
+        return nil unless response
         response = response.send(:[], options[:root]) if options[:root]
         response
       end
